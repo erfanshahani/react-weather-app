@@ -27,9 +27,6 @@ useEffect(() => {
 }, []);
   const fetchWeather = async () => {
     if (!city.trim()) return;
-    
-    const fetchWeather = async () => {
-      if (!city.trim()) return;
       
       setLoading(true);
       try {
@@ -233,6 +230,6 @@ useEffect(() => {
       
   );
   
-}
+
 
 export default App;
