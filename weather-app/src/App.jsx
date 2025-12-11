@@ -11,7 +11,7 @@ function App() {
   const API_KEY = '3588bc818593915563499238cac95b0a';
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionsRef = useRef(null);
-
+  const [forecast, setForecast] = useState([]);
 // بستن پیشنهادات با کلیک بیرون
 useEffect(() => {
   const handleClickOutside = (event) => {
@@ -28,21 +28,39 @@ useEffect(() => {
   const fetchWeather = async () => {
     if (!city.trim()) return;
     
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric&lang=fa`
-      );
-      const data = await response.json();
-      if (data.cod === 200) {
-        setWeather(data);
-      } else {
-        alert('شهر یافت نشد!');
+    const fetchWeather = async () => {
+      if (!city.trim()) return;
+      
+      setLoading(true);
+      try {
+        // آب‌وهوای فعلی
+        const currentResponse = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric&lang=fa`
+        );
+        const currentData = await currentResponse.json();
+        
+        if (currentData.cod === 200) {
+          setWeather(currentData);
+          
+          // پیش‌بینی ۵ روزه
+          const forecastResponse = await fetch(
+            `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric&lang=fa`
+          );
+          const forecastData = await forecastResponse.json();
+          
+          // فیلتر: فقط یک داده برای هر روز (ظهر)
+          const dailyForecast = forecastData.list.filter(item => 
+            item.dt_txt.includes('12:00:00')
+          );
+          setForecast(dailyForecast);
+        } else {
+          alert('شهر یافت نشد!');
+        }
+      } catch (error) {
+        alert('خطا در دریافت اطلاعات!');
       }
-    } catch (error) {
-      alert('خطا در دریافت اطلاعات!');
-    }
-    setLoading(false);
+      setLoading(false);
+    };
   };
 
   // فشار دادن Enter برای جستجو
@@ -173,7 +191,39 @@ useEffect(() => {
           </ol>
           <p className="note">⚠️ دقت کنید: نام شهر باید به فارسی یا انگلیسی صحیح نوشته شود</p>
         </div>
-
+{/* پیش‌بینی ۵ روزه */}
+{forecast.length > 0 && (
+  <div className="forecast-section">
+    <h3 className="forecast-title">پیش‌بینی ۵ روز آینده</h3>
+    <div className="forecast-container">
+      {forecast.map((day, index) => {
+        const date = new Date(day.dt * 1000);
+        const dayNames = ['یک‌شنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'];
+        const dayName = dayNames[date.getDay()];
+        const month = date.toLocaleDateString('fa-IR', { month: 'long' });
+        const dayNum = date.getDate();
+        
+        return (
+          <div className="forecast-card" key={index}>
+            <p className="forecast-day">{dayName}</p>
+            <p className="forecast-date">{dayNum} {month}</p>
+            <img
+              src={`http://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`}
+              alt={day.weather[0].description}
+              className="forecast-icon"
+            />
+            <p className="forecast-temp">{Math.round(day.main.temp)}°C</p>
+            <p className="forecast-desc">{day.weather[0].description}</p>
+            <div className="forecast-details">
+              <span>💧 {day.main.humidity}%</span>
+              <span>💨 {day.wind.speed} m/s</span>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+)}
         {/* فوتر */}
         <footer>
           <p>طراحی شده با ❤️ برای خاله‌های دوست‌داشتنی</p>
