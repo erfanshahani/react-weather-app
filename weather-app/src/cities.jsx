@@ -1,4 +1,4 @@
-import './cities.css';
+
 
 // src/cities.js
 export const iranCities = [
