@@ -57,7 +57,7 @@ useEffect(() => {
         alert('خطا در دریافت اطلاعات!');
       }
       setLoading(false);
-    };
+    
   };
 
   // فشار دادن Enter برای جستجو
@@ -229,7 +229,7 @@ useEffect(() => {
       </div>
       
   );
-  
 
+};
 
 export default App;
