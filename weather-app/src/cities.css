@@ -1,0 +1,61 @@
+/* استایل Auto-complete */
+.search-container {
+    position: relative;
+    margin-bottom: 40px;
+  }
+  
+  .suggestions-list {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 0 0 20px 20px;
+    border-top: none;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+    margin-top: 5px;
+  }
+  
+  .suggestion-item {
+    padding: 15px 20px;
+    cursor: pointer;
+    color: #333;
+    font-size: 1.1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
+  }
+  
+  .suggestion-item:hover {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    color: white;
+    padding-right: 30px;
+  }
+  
+  .suggestion-item:last-child {
+    border-bottom: none;
+  }
+  
+  /* وقتی پیشنهادات باز است، input گردی پایین نداشته باشد */
+  .search-box:has(.suggestions-list) .search-input {
+    border-radius: 20px 20px 0 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  /* اسکرول بار زیبا برای پیشنهادات */
+  .suggestions-list::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  .suggestions-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+  
+  .suggestions-list::-webkit-scrollbar-thumb {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    border-radius: 10px;
+  }

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { iranCities } from './cities';
 import './App.css';
 
 function App() {
@@ -8,7 +9,22 @@ function App() {
 
   // 🔑 کلید API خودت را اینجا بگذار
   const API_KEY = '3588bc818593915563499238cac95b0a';
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const suggestionsRef = useRef(null);
 
+// بستن پیشنهادات با کلیک بیرون
+useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (suggestionsRef.current && !suggestionsRef.current.contains(event.target)) {
+      setShowSuggestions(false);
+    }
+  };
+
+  document.addEventListener('mousedown', handleClickOutside);
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  };
+}, []);
   const fetchWeather = async () => {
     if (!city.trim()) return;
     
@@ -46,23 +62,54 @@ function App() {
         </header>
 
         {/* جستجو */}
-        <div className="search-box">
-          <input
-            type="text"
-            placeholder="نام شهر را وارد کنید..."
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
-            onKeyPress={handleKeyPress}
-            className="search-input"
-          />
-          <button 
-            onClick={fetchWeather} 
-            className="search-btn"
-            disabled={loading}
-          >
-            {loading ? 'در حال دریافت...' : 'مشاهده آب‌وهوا'}
-          </button>
-        </div>
+        <div className="search-container" ref={suggestionsRef}>
+  <div className="search-box">
+    <input
+      type="text"
+      placeholder="نام شهر را جستجو کنید..."
+      value={city}
+      onChange={(e) => {
+        setCity(e.target.value);
+        setShowSuggestions(e.target.value.length > 0);
+      }}
+      onKeyPress={handleKeyPress}
+      className="search-input"
+      onFocus={() => setShowSuggestions(true)}
+    />
+    <button 
+      onClick={fetchWeather} 
+      className="search-btn"
+      disabled={loading}
+    >
+      {loading ? 'در حال دریافت...' : 'مشاهده آب‌وهوا'}
+    </button>
+    
+    {/* لیست پیشنهادات */}
+    {showSuggestions && city && (
+      <div className="suggestions-list">
+        {iranCities
+          .filter(cityName => 
+            cityName.toLowerCase().includes(city.toLowerCase())
+          )
+          .slice(0, 8) // فقط ۸ پیشنهاد اول
+          .map((cityName, index) => (
+            <div
+              key={index}
+              className="suggestion-item"
+              onClick={() => {
+                setCity(cityName);
+                setShowSuggestions(false);
+                fetchWeather();
+              }}
+            >
+              {cityName}
+            </div>
+          ))
+        }
+      </div>
+    )}
+  </div>
+</div>
 
         {/* نمایش نتیجه */}
         {weather && (
