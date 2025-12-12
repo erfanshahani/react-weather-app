@@ -316,6 +316,7 @@ footer p {
   max-height: 300px;
   overflow-y: auto;
   margin-top: 5px;
+  
 }
 
 .suggestion-item {
@@ -365,6 +366,7 @@ footer p {
   border-radius: 25px;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2);
+ 
 }
 
 .forecast-title {
@@ -391,6 +393,7 @@ footer p {
   color: white;
   transition: transform 0.3s, box-shadow 0.3s;
   border: 1px solid rgba(255, 255, 255, 0.1);
+ 
 }
 
 .forecast-card:hover {
@@ -455,5 +458,447 @@ footer p {
   .forecast-card {
     width: 100%;
     max-width: 250px;
+  }
+}
+/* ======== مودال جزئیات روز ======== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(15px);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-container {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.15), 
+    rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(30px);
+  border-radius: 30px;
+  width: 100%;
+  max-width: 900px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4),
+              0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  overflow: hidden;
+  animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header h2 {
+  color: #FFD700;
+  font-size: 1.8rem;
+  margin: 0;
+  text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: rotate(90deg);
+}
+
+.modal-content {
+  padding: 30px;
+  color: white;
+}
+
+.day-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.day-header h3 {
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.day-main-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.day-main-info img {
+  width: 120px;
+  height: 120px;
+  filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+}
+
+.temp-display {
+  text-align: center;
+}
+
+.main-temp {
+  font-size: 4rem;
+  font-weight: 300;
+  color: #FFD700;
+  display: block;
+  text-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+}
+
+.feels-like {
+  font-size: 1.2rem;
+  opacity: 0.8;
+  margin-top: 10px;
+  display: block;
+}
+
+.details-grid-modal {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.detail-box {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: transform 0.3s, background 0.3s;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.detail-box:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.detail-icon {
+  font-size: 2rem;
+  opacity: 0.9;
+}
+
+.detail-text h4 {
+  margin: 0 0 15px 0;
+  font-size: 1.3rem;
+  color: #FFD700;
+}
+
+.detail-text p {
+  margin: 8px 0;
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.weather-poem {
+  background: linear-gradient(135deg, 
+    rgba(102, 126, 234, 0.2), 
+    rgba(118, 75, 162, 0.2));
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  border-left: 5px solid #FFD700;
+  margin-top: 30px;
+}
+
+.poem-title {
+  font-size: 1.5rem;
+  color: #FFD700;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.poem-text {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  opacity: 0.9;
+  font-style: italic;
+}
+
+/* ریسپانسیو مودال */
+@media (max-width: 768px) {
+  .modal-container {
+    margin: 10px;
+    padding: 0;
+  }
+  
+  .modal-header {
+    padding: 20px;
+  }
+  
+  .modal-content {
+    padding: 20px;
+  }
+  
+  .day-main-info {
+    gap: 20px;
+  }
+  
+  .main-temp {
+    font-size: 3rem;
+  }
+  
+  .details-grid-modal {
+    grid-template-columns: 1fr;
+  }
+}
+/* ======== مودال جزئیات روز ======== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(15px);
+  z-index: 2000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-container {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.15), 
+    rgba(255, 255, 255, 0.05));
+  backdrop-filter: blur(30px);
+  border-radius: 30px;
+  width: 100%;
+  max-width: 900px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4),
+              0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  overflow: hidden;
+  animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 25px 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-header h2 {
+  color: #FFD700;
+  font-size: 1.8rem;
+  margin: 0;
+  text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: white;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: rotate(90deg);
+}
+
+.modal-content {
+  padding: 30px;
+  color: white;
+}
+
+.day-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.day-header h3 {
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.day-main-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.day-main-info img {
+  width: 120px;
+  height: 120px;
+  filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+}
+
+.temp-display {
+  text-align: center;
+}
+
+.main-temp {
+  font-size: 4rem;
+  font-weight: 300;
+  color: #FFD700;
+  display: block;
+  text-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+}
+
+.feels-like {
+  font-size: 1.2rem;
+  opacity: 0.8;
+  margin-top: 10px;
+  display: block;
+}
+
+.details-grid-modal {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  margin-bottom: 40px;
+}
+
+.detail-box {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transition: transform 0.3s, background 0.3s;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.detail-box:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.detail-icon {
+  font-size: 2rem;
+  opacity: 0.9;
+}
+
+.detail-text h4 {
+  margin: 0 0 15px 0;
+  font-size: 1.3rem;
+  color: #FFD700;
+}
+
+.detail-text p {
+  margin: 8px 0;
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.weather-poem {
+  background: linear-gradient(135deg, 
+    rgba(102, 126, 234, 0.2), 
+    rgba(118, 75, 162, 0.2));
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  border-left: 5px solid #FFD700;
+  margin-top: 30px;
+}
+
+.poem-title {
+  font-size: 1.5rem;
+  color: #FFD700;
+  margin-bottom: 15px;
+  font-weight: bold;
+}
+
+.poem-text {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  opacity: 0.9;
+  font-style: italic;
+}
+
+/* ریسپانسیو مودال */
+@media (max-width: 768px) {
+  .modal-container {
+    margin: 10px;
+    padding: 0;
+  }
+  
+  .modal-header {
+    padding: 20px;
+  }
+  
+  .modal-content {
+    padding: 20px;
+  }
+  
+  .day-main-info {
+    gap: 20px;
+  }
+  
+  .main-temp {
+    font-size: 3rem;
+  }
+  
+  .details-grid-modal {
+    grid-template-columns: 1fr;
   }
 }
