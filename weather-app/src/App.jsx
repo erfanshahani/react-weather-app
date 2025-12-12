@@ -40,13 +40,13 @@ useEffect(() => {
       setLoading(true);
       try {
         // آب‌وهوای فعلی
-        const currentResponse = await fetch(
+        const response = await fetch(
           `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric&lang=fa`
         );
-        const currentData = await currentResponse.json();
+        const data = await response.json();
         
-        if (currentData.cod === 200) {
-          setWeather(currentData);
+        if (data.cod === 200) {
+          setWeather(data);
           
           // پیش‌بینی ۵ روزه
           const forecastResponse = await fetch(
