@@ -45,7 +45,7 @@ useEffect(() => {
         );
         const data = await response.json();
         
-        if (data.cod === 200) {
+        if (String(data.cod) === "200") {
           setWeather(data);
           
           // پیش‌بینی ۵ روزه
@@ -62,13 +62,15 @@ useEffect(() => {
         } else {
           alert('شهر یافت نشد!');
         }
+        
       } catch (error) {
         alert('خطا در دریافت اطلاعات!');
       }
+      
       setLoading(false);
-    
+  
   };
-
+}
   // فشار دادن Enter برای جستجو
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -83,12 +85,13 @@ useEffect(() => {
         <header>
           <h1>🌤 آسمان انگار</h1>
         </header>
-
-        {/* جستجو */}
+                {/* جستجو */}
         <div className="search-container" ref={suggestionsRef}>
-  <div className="search-box">
-    <input
-      type="text"
+        <div className="search-box">
+          
+        <input
+      type="text"/>
+     
       placeholder="نام شهر را جستجو کنید..."
       value={city}
       onChange={(e) => {
@@ -98,7 +101,7 @@ useEffect(() => {
       onKeyPress={handleKeyPress}
       className="search-input"
       onFocus={() => setShowSuggestions(true)}
-    />
+    
     <button 
       onClick={fetchWeather} 
       className="search-btn"
@@ -327,6 +330,6 @@ useEffect(() => {
       
   );
 
-};
+
 
 export default App;
