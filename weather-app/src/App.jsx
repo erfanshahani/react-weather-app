@@ -45,9 +45,9 @@ function App() {
       );
       const data = await response.json();
 
-      if (currentData.cod === 200) {
-        setWeather(currentData);
-        setWeatherCondition(currentData.weather[0].main);
+      if (data.cod === 200) {
+        setWeather(data);
+        setWeatherCondition(data.weather[0].main);
         // forecast
         const forecastResponse = await fetch(
           `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric&lang=fa`
@@ -80,7 +80,7 @@ function App() {
   return (
     <div className="app">
       <WeatherBackground weatherCondition={weatherCondition} />
-      
+
       <div className="container">
 
         {/* هدر */}
