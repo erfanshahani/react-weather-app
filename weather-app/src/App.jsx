@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { iranCities } from './cities';
+import WeatherBackground from './WeatherBackground';
 import './App.css';
 
 function App() {
   const [city, setCity] = useState('تهران');
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const [weatherCondition, setWeatherCondition] = useState('Default');
   const [selectedDay, setSelectedDay] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
 
@@ -44,9 +45,9 @@ function App() {
       );
       const data = await response.json();
 
-      if (String(data.cod) === "200") {
-        setWeather(data);
-
+      if (currentData.cod === 200) {
+        setWeather(currentData);
+        setWeatherCondition(currentData.weather[0].main);
         // forecast
         const forecastResponse = await fetch(
           `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric&lang=fa`
@@ -78,6 +79,8 @@ function App() {
 
   return (
     <div className="app">
+      <WeatherBackground weatherCondition={weatherCondition} />
+      
       <div className="container">
 
         {/* هدر */}

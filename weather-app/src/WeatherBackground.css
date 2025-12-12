@@ -1,0 +1,419 @@
+/* پایه‌ای */
+.weather-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  
+  /* ======== آفتابی ======== */
+  .sunny-animation {
+    background: linear-gradient(180deg, 
+      #87CEEB 0%,
+      #E0F6FF 30%,
+      #FFEAA7 70%,
+      #FFD166 100%
+    );
+    animation: skyShift 20s infinite alternate;
+  }
+  
+  @keyframes skyShift {
+    0% { background-position: 0% 0%; }
+    100% { background-position: 100% 100%; }
+  }
+  
+  .sun {
+    position: absolute;
+    top: 50px;
+    right: 100px;
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, #FFD700, #FF8C00);
+    border-radius: 50%;
+    box-shadow: 0 0 60px #FFA500,
+                0 0 100px #FFD700;
+    animation: sunPulse 3s infinite alternate;
+  }
+  
+  @keyframes sunPulse {
+    0% { transform: scale(1); box-shadow: 0 0 60px #FFA500; }
+    100% { transform: scale(1.05); box-shadow: 0 0 80px #FFD700; }
+  }
+  
+  .sun-ray {
+    position: absolute;
+    top: 50px;
+    right: 100px;
+    width: 2px;
+    height: 120px;
+    background: linear-gradient(to bottom, transparent, #FFD700, transparent);
+  }
+  
+  .ray1 { transform: rotate(0deg); }
+  .ray2 { transform: rotate(120deg); }
+  .ray3 { transform: rotate(240deg); }
+  
+  .bird {
+    position: absolute;
+    width: 30px;
+    height: 20px;
+    background: #333;
+    clip-path: polygon(0% 50%, 100% 0%, 100% 100%);
+    opacity: 0.7;
+  }
+  
+  .bird1 {
+    top: 100px;
+    left: -30px;
+    animation: flyRight 15s linear infinite;
+  }
+  
+  .bird2 {
+    top: 150px;
+    left: -30px;
+    animation: flyRight 18s linear infinite 2s;
+  }
+  
+  @keyframes flyRight {
+    0% { transform: translateX(0) translateY(0); }
+    25% { transform: translateX(200px) translateY(-10px); }
+    50% { transform: translateX(400px) translateY(0); }
+    75% { transform: translateX(600px) translateY(10px); }
+    100% { transform: translateX(1000px) translateY(0); }
+  }
+  
+  .cloud {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+  }
+  
+  .cloud1 {
+    width: 100px;
+    height: 40px;
+    top: 80px;
+    left: -100px;
+    animation: cloudMove 25s linear infinite;
+  }
+  
+  .cloud2 {
+    width: 150px;
+    height: 60px;
+    top: 150px;
+    left: -150px;
+    animation: cloudMove 30s linear infinite 5s;
+  }
+  
+  @keyframes cloudMove {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(calc(100vw + 200px)); }
+  }
+  
+  /* ======== ابری ======== */
+  .cloudy-animation {
+    background: linear-gradient(180deg,
+      #B0BEC5 0%,
+      #90A4AE 50%,
+      #78909C 100%
+    );
+  }
+  
+  .heavy-cloud1, .heavy-cloud2, .heavy-cloud3 {
+    position: absolute;
+    background: rgba(200, 200, 210, 0.95);
+    border-radius: 50%;
+    filter: blur(2px);
+  }
+  
+  .heavy-cloud1 {
+    width: 200px;
+    height: 80px;
+    top: 50px;
+    left: -200px;
+    animation: heavyCloudMove 40s linear infinite;
+  }
+  
+  .heavy-cloud2 {
+    width: 250px;
+    height: 100px;
+    top: 120px;
+    left: -250px;
+    animation: heavyCloudMove 50s linear infinite 10s;
+  }
+  
+  .heavy-cloud3 {
+    width: 180px;
+    height: 70px;
+    top: 200px;
+    left: -180px;
+    animation: heavyCloudMove 45s linear infinite 5s;
+  }
+  
+  @keyframes heavyCloudMove {
+    0% { transform: translateX(0); opacity: 0.8; }
+    50% { opacity: 1; }
+    100% { transform: translateX(calc(100vw + 300px)); opacity: 0.8; }
+  }
+  
+  .fog {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%
+    );
+    animation: fogMove 60s linear infinite;
+  }
+  
+  @keyframes fogMove {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+  }
+  
+  /* ======== بارانی ======== */
+  .rainy-animation {
+    background: linear-gradient(180deg,
+      #37474F 0%,
+      #546E7A 50%,
+      #78909C 100%
+    );
+    overflow: hidden;
+  }
+  
+  .raindrop {
+    position: absolute;
+    width: 2px;
+    height: 20px;
+    background: linear-gradient(to bottom, transparent, #BBDEFB, transparent);
+    animation: rainFall linear infinite;
+  }
+  @keyframes rainFall {
+    0% {
+      transform: translateY(-100px) rotate(15deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(calc(100vh + 100px)) rotate(15deg);
+      opacity: 0;
+    }
+  }
+  
+  /* ایجاد باران رندوم */
+  .raindrop:nth-child(1) { left: 5%; animation-duration: 1.2s; animation-delay: 0s; }
+  .raindrop:nth-child(2) { left: 10%; animation-duration: 1.4s; animation-delay: 0.1s; }
+  .raindrop:nth-child(3) { left: 15%; animation-duration: 1.3s; animation-delay: 0.2s; }
+  /* ... برای ۶۰ قطره */
+  
+  .window {
+    position: absolute;
+    bottom: 100px;
+    right: 100px;
+    width: 300px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+  }
+  
+  .raindrop-window {
+    position: absolute;
+    width: 3px;
+    height: 15px;
+    background: linear-gradient(to bottom, transparent, #BBDEFB, transparent);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    animation: windowDrip linear infinite;
+  }
+  
+  @keyframes windowDrip {
+    0% {
+      transform: translateY(-200px);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 0;
+    }
+  }
+  
+  /* ======== برفی ======== */
+  .snowy-animation {
+    background: linear-gradient(180deg,
+      #E3F2FD 0%,
+      #BBDEFB 50%,
+      #90CAF9 100%
+    );
+  }
+  
+  .snowflake {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: white;
+    border-radius: 50%;
+    filter: blur(1px);
+    box-shadow: 0 0 10px white;
+    animation: snowFall linear infinite;
+  }
+  
+  @keyframes snowFall {
+    0% {
+      transform: translateY(-100px) translateX(0) rotate(0deg);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100vh) translateX(100px) rotate(360deg);
+      opacity: 0;
+    }
+  }
+  
+  .snow-pile {
+    position: absolute;
+    bottom: 0;
+    background: white;
+    border-radius: 50% 50% 0 0;
+    filter: blur(5px);
+    opacity: 0.9;
+  }
+  
+  .pile1 {
+    left: 10%;
+    width: 200px;
+    height: 80px;
+  }
+  
+  .pile2 {
+    right: 15%;
+    width: 150px;
+    height: 60px;
+  }
+  
+  /* ======== طوفانی ======== */
+  .stormy-animation {
+    background: linear-gradient(180deg,
+      #263238 0%,
+      #37474F 50%,
+      #455A64 100%
+    );
+  }
+  
+  .storm-raindrop {
+    position: absolute;
+    width: 3px;
+    height: 25px;
+    background: linear-gradient(to bottom, transparent, #78909C, transparent);
+    animation: stormRain linear infinite;
+  }
+  
+  @keyframes stormRain {
+    0% {
+      transform: translateY(-100px) translateX(-20px);
+      opacity: 0;
+    }
+    5% {
+      opacity: 1;
+    }
+    95% {
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(100vh) translateX(20px);
+      opacity: 0;
+    }
+  }
+  
+  .lightning {
+    position: absolute;
+    width: 3px;
+    height: 100px;
+    background: linear-gradient(to bottom, transparent, #FFF59D, transparent);
+    opacity: 0;
+    animation: lightningFlash 8s infinite;
+    left: 30%;
+    top: 20%;
+  }
+  
+  @keyframes lightningFlash {
+    0%, 90% { opacity: 0; }
+    91%, 93% { opacity: 1; }
+    94%, 100% { opacity: 0; }
+  }
+  
+  .wind-leaf {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #8BC34A;
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    opacity: 0.7;
+  }
+  
+  .leaf1 {
+    top: 100px;
+    left: -20px;
+    animation: windBlow 10s linear infinite;
+  }
+  
+  .leaf2 {
+    top: 200px;
+    left: -20px;
+    animation: windBlow 12s linear infinite 1s;
+  }
+  
+  .leaf3 {
+    top: 150px;
+    left: -20px;
+    animation: windBlow 15s linear infinite 2s;
+  }
+  
+  @keyframes windBlow {
+    0% { transform: translateX(0) translateY(0) rotate(0deg); }
+    25% { transform: translateX(250px) translateY(50px) rotate(90deg); }
+    50% { transform: translateX(500px) translateY(0) rotate(180deg); }
+    75% { transform: translateX(750px) translateY(-50px) rotate(270deg); }
+    100% { transform: translateX(1000px) translateY(0) rotate(360deg); }
+  }
+  
+  /* ======== پیش‌فرض ======== */
+  .default-animation {
+    background: linear-gradient(135deg,
+      #667eea 0%,
+      #764ba2 50%,
+      #f093fb 100%
+    );
+    animation: gradientShift 15s ease infinite;
+    background-size: 400% 400%;
+  }
+  @keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
