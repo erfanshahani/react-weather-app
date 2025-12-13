@@ -12,6 +12,20 @@ function App() {
   const [showDetails, setShowDetails] = useState(false);
 
   // بعد از stateهای دیگر
+const [airQuality, setAirQuality] = useState(null);
+const [aqiLevel, setAqiLevel] = useState('');
+
+// مقادیر AQI و معانی فارسی
+const aqiLabels = {
+  1: { label: 'عالی', color: '#00E400', emoji: '😊', desc: 'هوای پاک و سالم' },
+  2: { label: 'خوب', color: '#FFFF00', emoji: '🙂', desc: 'هوای قابل قبول' },
+  3: { label: 'متوسط', color: '#FF7E00', emoji: '😐', desc: 'حساسیت برای گروه‌های آسیب‌پذیر' },
+  4: { label: 'ناسالم', color: '#FF0000', emoji: '😷', desc: 'برای همه ناسالم' },
+  5: { label: 'بسیار ناسالم', color: '#8F3F97', emoji: '🤢', desc: 'هشدار سلامت جدی' },
+  6: { label: 'خطرناک', color: '#7E0023', emoji: '☠️', desc: 'وضعیت اضطراری' }
+};
+
+  // بعد از stateهای دیگر
 const [showSidebar, setShowSidebar] = useState(false);
 const [locationSearch, setLocationSearch] = useState('');
 const [locationResults, setLocationResults] = useState([]);
@@ -77,18 +91,27 @@ const selectLocation = (location) => {
       );
       const data = await response.json();
 
-      if (data.cod === 200) {
-        setWeather(data);
-        setWeatherCondition(data.weather[0].main);
+      if (currentData.cod === 200) {
+        setWeather(currentData);
         // forecast
-        const forecastResponse = await fetch(
+        const aqResponse = await fetch(
           `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric&lang=fa`
         );
-        const forecastData = await forecastResponse.json();
-
+        const aqData = await aqResponse.json();
+        
+        if (aqData.list && aqData.list.length > 0) {
+          setAirQuality(aqData.list[0]);
+          const aqi = aqData.list[0].main.aqi;
+          setAqiLevel(aqiLabels[aqi] || aqiLabels[1]);
+        }
+        
+        // بقیه کدها...
+      
+    
         const dailyForecast = forecastData.list.filter(item =>
           item.dt_txt.includes('12:00:00')
         );
+        
         setForecast(dailyForecast);
 
       } else {
@@ -233,7 +256,92 @@ const selectLocation = (location) => {
           </div>
         )}
 
-       
+       {/* کیفیت هوا */}
+{airQuality && (
+  <div className="air-quality-section">
+    <h3 className="aqi-title">🌫️ کیفیت هوا (AQI)</h3>
+    
+    <div className="aqi-display">
+      <div 
+        className="aqi-circle"
+        style={{ 
+          background: `conic-gradient(${aqiLevel.color} 0% ${(aqiLevel.value || 1) * 20}%, #eee ${(aqiLevel.value || 1) * 20}% 100%)`,
+          borderColor: aqiLevel.color
+        }}
+      >
+        <span className="aqi-number">{airQuality.main.aqi}</span>
+        <span className="aqi-label">{aqiLevel.emoji} {aqiLevel.label}</span>
+      </div>
+      
+      <div className="aqi-details">
+        <p className="aqi-description">{aqiLevel.desc}</p>
+        
+        <div className="pollutants-grid">
+          <div className="pollutant">
+            <span className="pollutant-name">مونوکسید کربن</span>
+            <span className="pollutant-value">
+              {airQuality.components.co.toFixed(2)} μg/m³
+            </span>
+            <div className="pollutant-bar">
+              <div 
+                className="pollutant-fill" 
+                style={{ width: `${Math.min(airQuality.components.co / 10, 100)}%` }}
+              ></div>
+            </div>
+          </div>
+          
+          <div className="pollutant">
+            <span className="pollutant-name">دی‌اکسید نیتروژن</span>
+            <span className="pollutant-value">
+              {airQuality.components.no2.toFixed(2)} μg/m³
+            </span>
+            <div className="pollutant-bar">
+              <div 
+                className="pollutant-fill" 
+                style={{ width: `${Math.min(airQuality.components.no2 / 50, 100)}%` }}
+              ></div>
+            </div>
+          </div>
+          
+          <div className="pollutant">
+            <span className="pollutant-name">ازن</span>
+            <span className="pollutant-value">
+              {airQuality.components.o3.toFixed(2)} μg/m³
+            </span>
+            <div className="pollutant-bar">
+              <div 
+                className="pollutant-fill" 
+                style={{ width: `${Math.min(airQuality.components.o3 / 100, 100)}%` }}
+              ></div>
+            </div>
+          </div>
+          
+          <div className="pollutant">
+            <span className="pollutant-name">ذرات معلق</span>
+            <span className="pollutant-value">
+              {airQuality.components.pm2_5.toFixed(2)} μg/m³
+            </span>
+            <div className="pollutant-bar">
+              <div 
+                className="pollutant-fill" 
+                style={{ width: `${Math.min(airQuality.components.pm2_5 / 35, 100)}%` }}
+              ></div>
+            </div>
+          </div>
+        </div>
+        
+        <div className="aqi-tips">
+          <p>💡 توصیه: {
+            airQuality.main.aqi <= 2 ? 'می‌توانید به راحتی بیرون بروید' :
+            airQuality.main.aqi <= 3 ? 'گروه‌های حساس در خانه بمانند' :
+            airQuality.main.aqi <= 4 ? 'از فعالیت در فضای باز خودداری کنید' :
+            'در خانه بمانید و پنجره‌ها را ببندید'
+          }</p>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
 
         {/* پیش‌بینی ۵ روزه */}
         {forecast.length > 0 && (
