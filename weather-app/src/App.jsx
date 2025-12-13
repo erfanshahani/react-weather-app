@@ -11,6 +11,38 @@ function App() {
   const [selectedDay, setSelectedDay] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
 
+  // بعد از stateهای دیگر
+const [showSidebar, setShowSidebar] = useState(false);
+const [locationSearch, setLocationSearch] = useState('');
+const [locationResults, setLocationResults] = useState([]);
+
+// تابع جستجوی موقعیت مکانی
+const searchLocation = async () => {
+  if (!locationSearch.trim()) return;
+  
+  try {
+    const response = await fetch(
+      `https://api.openweathermap.org/geo/1.0/direct?q=${locationSearch}&limit=5&appid=${API_KEY}`
+    );
+    const data = await response.json();
+    setLocationResults(data);
+  } catch (error) {
+    console.error('خطا در جستجوی موقعیت:', error);
+  }
+};
+
+// انتخاب موقعیت
+const selectLocation = (location) => {
+  setCity(location.name);
+  setShowSidebar(false);
+  setLocationSearch('');
+  setLocationResults([]);
+  // بعد از بسته شدن سایدبار، آب‌وهوا را بگیر
+  setTimeout(() => {
+    fetchWeather();
+  }, 300);
+};
+
   const openDayDetails = (dayData) => {
     setSelectedDay(dayData);
     setShowDetails(true);
@@ -87,6 +119,15 @@ function App() {
         <header>
           <h1>🌤 آسمان انگار</h1>
         </header>
+
+        {/* دکمه + در گوشه بالا چپ */}
+<button 
+  className="floating-add-btn"
+  onClick={() => setShowSidebar(true)}
+  title="جستجوی موقعیت جدید"
+>
+  +
+</button>
 
         {/* جستجو */}
         <div className="search-container" ref={suggestionsRef}>
@@ -329,6 +370,112 @@ function App() {
         )}
 
       </div>
+      {/* سایدبار کشویی */}
+<div className={`sidebar-overlay ${showSidebar ? 'active' : ''}`}>
+  <div className="sidebar-backdrop" onClick={() => setShowSidebar(false)}></div>
+  
+  <div className="sidebar-container">
+    <div className="sidebar-header">
+      <h3>🌍 جستجوی موقعیت مکانی</h3>
+      <button 
+        className="sidebar-close"
+        onClick={() => setShowSidebar(false)}
+      >
+        ✕
+      </button>
+    </div>
+    
+    <div className="sidebar-content">
+      <div className="location-search-box">
+        <input
+          type="text"
+          placeholder="نام شهر، کشور یا مختصات جغرافیایی..."
+          value={locationSearch}
+          onChange={(e) => {
+            setLocationSearch(e.target.value);
+            if (e.target.value.length > 2) {
+              searchLocation();
+            }
+          }}
+          onKeyPress={(e) => e.key === 'Enter' && searchLocation()}
+          className="location-input"
+        />
+        <button 
+          onClick={searchLocation}
+          className="location-search-btn"
+        >
+          🔍
+        </button>
+      </div>
+      
+      {/* نتایج جستجو */}
+      <div className="location-results">
+        {locationResults.length > 0 ? (
+          locationResults.map((loc, index) => (
+            <div 
+              key={index}
+              className="location-item"
+              onClick={() => selectLocation(loc)}
+            >
+              <div className="location-info">
+                <span className="location-name">{loc.name}</span>
+                <span className="location-details">
+                  {loc.state && `${loc.state}, `}{loc.country}
+                </span>
+              </div>
+              <div className="location-coords">
+                <span>🌐 {loc.lat.toFixed(2)}, {loc.lon.toFixed(2)}</span>
+              </div>
+            </div>
+          ))
+        ) : locationSearch.length > 2 ? (
+          <div className="no-results">
+            <p>📍 موقعیتی یافت نشد</p>
+            <p className="hint">نام شهر را به انگلیسی یا فارسی کامل بنویسید</p>
+          </div>
+        ) : (
+          <div className="search-hint">
+            <p>💡 برای شروع جستجو، حداقل ۳ حرف وارد کنید</p>
+            <div className="examples">
+              <p>مثال‌ها:</p>
+              <ul>
+                <li>Tehran, Iran</li>
+                <li>35.6892, 51.3890 (مختصات)</li>
+                <li>مشهد</li>
+                <li>New York, US</li>
+              </ul>
+            </div>
+          </div>
+        )}
+      </div>
+      
+      {/* موقعیت فعلی کاربر */}
+      <div className="current-location-section">
+        <h4>📍 موقعیت فعلی شما</h4>
+        <button 
+          className="get-location-btn"
+          onClick={() => {
+            if (navigator.geolocation) {
+              navigator.geolocation.getCurrentPosition(
+                (position) => {
+                  const { latitude, longitude } = position.coords;
+                  setCity(`${latitude},${longitude}`);
+                  setShowSidebar(false);
+                  setTimeout(() => fetchWeather(), 300);
+                },
+                () => alert('دسترسی به موقعیت مکانی مجاز نیست')
+              );
+            } else {
+              alert('مرورگر شما از موقعیت‌یابی پشتیبانی نمی‌کند');
+            }
+          }}
+        >
+          دریافت موقعیت خودکار
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
     </div>
   );
 }
