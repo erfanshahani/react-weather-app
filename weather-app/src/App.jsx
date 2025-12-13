@@ -4,132 +4,112 @@ import WeatherBackground from './WeatherBackground';
 import './App.css';
 
 function App() {
+  const API_KEY = '3588bc818593915563499238cac95b0a';
+
   const [city, setCity] = useState('تهران');
   const [weather, setWeather] = useState(null);
+  const [forecast, setForecast] = useState([]);
   const [loading, setLoading] = useState(false);
   const [weatherCondition, setWeatherCondition] = useState('Default');
+
+  const [airQuality, setAirQuality] = useState(null);
+  const [aqiLevel, setAqiLevel] = useState(null);
+
   const [selectedDay, setSelectedDay] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
 
-  // بعد از stateهای دیگر
-const [airQuality, setAirQuality] = useState(null);
-const [aqiLevel, setAqiLevel] = useState('');
-
-// مقادیر AQI و معانی فارسی
-const aqiLabels = {
-  1: { label: 'عالی', color: '#00E400', emoji: '😊', desc: 'هوای پاک و سالم' },
-  2: { label: 'خوب', color: '#FFFF00', emoji: '🙂', desc: 'هوای قابل قبول' },
-  3: { label: 'متوسط', color: '#FF7E00', emoji: '😐', desc: 'حساسیت برای گروه‌های آسیب‌پذیر' },
-  4: { label: 'ناسالم', color: '#FF0000', emoji: '😷', desc: 'برای همه ناسالم' },
-  5: { label: 'بسیار ناسالم', color: '#8F3F97', emoji: '🤢', desc: 'هشدار سلامت جدی' },
-  6: { label: 'خطرناک', color: '#7E0023', emoji: '☠️', desc: 'وضعیت اضطراری' }
-};
-
-  // بعد از stateهای دیگر
-const [showSidebar, setShowSidebar] = useState(false);
-const [locationSearch, setLocationSearch] = useState('');
-const [locationResults, setLocationResults] = useState([]);
-
-// تابع جستجوی موقعیت مکانی
-const searchLocation = async () => {
-  if (!locationSearch.trim()) return;
-  
-  try {
-    const response = await fetch(
-      `https://api.openweathermap.org/geo/1.0/direct?q=${locationSearch}&limit=5&appid=${API_KEY}`
-    );
-    const data = await response.json();
-    setLocationResults(data);
-  } catch (error) {
-    console.error('خطا در جستجوی موقعیت:', error);
-  }
-};
-
-// انتخاب موقعیت
-const selectLocation = (location) => {
-  setCity(location.name);
-  setShowSidebar(false);
-  setLocationSearch('');
-  setLocationResults([]);
-  // بعد از بسته شدن سایدبار، آب‌وهوا را بگیر
-  setTimeout(() => {
-    fetchWeather();
-  }, 300);
-};
-
-  const openDayDetails = (dayData) => {
-    setSelectedDay(dayData);
-    setShowDetails(true);
-  };
-
-  const API_KEY = '3588bc818593915563499238cac95b0a';
   const [showSuggestions, setShowSuggestions] = useState(false);
   const suggestionsRef = useRef(null);
-  const [forecast, setForecast] = useState([]);
+
+  const [showSidebar, setShowSidebar] = useState(false);
+  const [locationSearch, setLocationSearch] = useState('');
+  const [locationResults, setLocationResults] = useState([]);
+
+  const aqiLabels = {
+    1: { label: 'عالی', color: '#00E400', emoji: '😊', desc: 'هوای پاک و سالم' },
+    2: { label: 'خوب', color: '#FFFF00', emoji: '🙂', desc: 'هوای قابل قبول' },
+    3: { label: 'متوسط', color: '#FF7E00', emoji: '😐', desc: 'حساسیت برای گروه‌های آسیب‌پذیر' },
+    4: { label: 'ناسالم', color: '#FF0000', emoji: '😷', desc: 'برای همه ناسالم' },
+    5: { label: 'بسیار ناسالم', color: '#8F3F97', emoji: '🤢', desc: 'هشدار سلامت جدی' }
+  };
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (suggestionsRef.current && !suggestionsRef.current.contains(event.target)) {
+    const handleClickOutside = (e) => {
+      if (suggestionsRef.current && !suggestionsRef.current.contains(e.target)) {
         setShowSuggestions(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const fetchWeather = async () => {
     if (!city.trim()) return;
-
     setLoading(true);
+
     try {
-      // weather
-      const response = await fetch(
+      // Weather
+      const weatherRes = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric&lang=fa`
       );
-      const data = await response.json();
+      const weatherData = await weatherRes.json();
 
-      if (currentData.cod === 200) {
-        setWeather(currentData);
-        // forecast
-        const aqResponse = await fetch(
-          `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric&lang=fa`
-        );
-        const aqData = await aqResponse.json();
-        
-        if (aqData.list && aqData.list.length > 0) {
-          setAirQuality(aqData.list[0]);
-          const aqi = aqData.list[0].main.aqi;
-          setAqiLevel(aqiLabels[aqi] || aqiLabels[1]);
-        }
-        
-        // بقیه کدها...
-      
-    
-        const dailyForecast = forecastData.list.filter(item =>
-          item.dt_txt.includes('12:00:00')
-        );
-        
-        setForecast(dailyForecast);
-
-      } else {
+      if (weatherData.cod !== 200) {
         alert('شهر یافت نشد!');
+        setLoading(false);
+        return;
       }
 
-    } catch (error) {
+      setWeather(weatherData);
+      setWeatherCondition(weatherData.weather[0].main);
+
+      const { lat, lon } = weatherData.coord;
+
+      // Air Quality
+      const airRes = await fetch(
+        `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`
+      );
+      const airData = await airRes.json();
+
+      if (airData.list?.length) {
+        const aqi = airData.list[0].main.aqi;
+        setAirQuality(airData.list[0]);
+        setAqiLevel(aqiLabels[aqi]);
+      }
+
+      // Forecast
+      const forecastRes = await fetch(
+        `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric&lang=fa`
+      );
+      const forecastData = await forecastRes.json();
+
+      const daily = forecastData.list.filter(item =>
+        item.dt_txt.includes('12:00:00')
+      );
+      setForecast(daily);
+
+    } catch (err) {
+      console.error(err);
       alert('خطا در دریافت اطلاعات!');
     }
 
     setLoading(false);
   };
 
-  // ENTER key
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      fetchWeather();
-    }
+  const searchLocation = async () => {
+    if (!locationSearch.trim()) return;
+    const res = await fetch(
+      `https://api.openweathermap.org/geo/1.0/direct?q=${locationSearch}&limit=5&appid=${API_KEY}`
+    );
+    setLocationResults(await res.json());
+  };
+
+  const selectLocation = (loc) => {
+    setCity(loc.name);
+    setShowSidebar(false);
+    setLocationSearch('');
+    setLocationResults([]);
+    setTimeout(fetchWeather, 300);
   };
 
   return (
@@ -137,453 +117,82 @@ const selectLocation = (location) => {
       <WeatherBackground weatherCondition={weatherCondition} />
 
       <div className="container">
-
-        {/* هدر */}
         <header>
           <h1>🌤 آسمان انگار</h1>
         </header>
 
-        {/* دکمه + در گوشه بالا چپ */}
-<button 
-  className="floating-add-btn"
-  onClick={() => setShowSidebar(true)}
-  title="جستجوی موقعیت جدید"
->
-  +
-</button>
+        <button className="floating-add-btn" onClick={() => setShowSidebar(true)}>+</button>
 
-        {/* جستجو */}
         <div className="search-container" ref={suggestionsRef}>
-          <div className="search-box">
+          <input
+            value={city}
+            placeholder="نام شهر را جستجو کنید..."
+            onChange={(e) => {
+              setCity(e.target.value);
+              setShowSuggestions(true);
+            }}
+            onKeyDown={(e) => e.key === 'Enter' && fetchWeather()}
+          />
+          <button onClick={fetchWeather} disabled={loading}>
+            {loading ? 'در حال دریافت...' : 'مشاهده آب‌وهوا'}
+          </button>
 
-            <input
-              type="text"
-              placeholder="نام شهر را جستجو کنید..."
-              value={city}
-              onChange={(e) => {
-                setCity(e.target.value);
-                setShowSuggestions(e.target.value.length > 0);
-              }}
-              onKeyPress={handleKeyPress}
-              className="search-input"
-              onFocus={() => setShowSuggestions(true)}
-            />
-
-            <button
-              onClick={fetchWeather}
-              className="search-btn"
-              disabled={loading}
-            >
-              {loading ? 'در حال دریافت...' : 'مشاهده آب‌وهوا'}
-            </button>
-
-            {showSuggestions && city && (
-              <div className="suggestions-list">
-                {iranCities
-                  .filter(cityName =>
-                    cityName.toLowerCase().includes(city.toLowerCase())
-                  )
-                  .slice(0, 8)
-                  .map((cityName, index) => (
-                    <div
-                      key={index}
-                      className="suggestion-item"
-                      onClick={() => {
-                        setCity(cityName);
-                        setShowSuggestions(false);
-                        fetchWeather();
-                      }}
-                    >
-                      {cityName}
-                    </div>
-                  ))
-                }
-              </div>
-            )}
-          </div>
+          {showSuggestions && (
+            <div className="suggestions-list">
+              {iranCities
+                .filter(c => c.includes(city))
+                .slice(0, 8)
+                .map((c, i) => (
+                  <div key={i} onClick={() => { setCity(c); setShowSuggestions(false); fetchWeather(); }}>
+                    {c}
+                  </div>
+                ))}
+            </div>
+          )}
         </div>
 
-
-        {/* نمایش نتیجه */}
         {weather && (
           <div className="weather-card">
-            <div className="city-name">
-              <h2>{weather.name}</h2>
-              <p>ایران</p>
-            </div>
-
-            <div className="weather-main">
-              <div className="temp-section">
-                <p className="temperature">{Math.round(weather.main.temp)}°C</p>
-                <p className="feels-like">احساس واقعی: {Math.round(weather.main.feels_like)}°C</p>
-              </div>
-
-              <div className="weather-icon">
-                <img
-                  src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}@4x.png`}
-                  alt={weather.weather[0].description}
-                />
-                <p className="weather-desc">{weather.weather[0].description}</p>
-              </div>
-            </div>
-
-            <div className="details-grid">
-              <div className="detail-item">
-                <span className="label">رطوبت</span>
-                <span className="value">{weather.main.humidity}%</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">باد</span>
-                <span className="value">{weather.wind.speed} m/s</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">فشار</span>
-                <span className="value">{weather.main.pressure} hPa</span>
-              </div>
-              <div className="detail-item">
-                <span className="label">دید</span>
-                <span className="value">{weather.visibility / 1000} km</span>
-              </div>
-            </div>
-
-            <div className="tips">
-              💡 نکته روز: {
-                weather.weather[0].main === 'Rain' ? 'چتر همراه داشته باشید' :
-                  weather.main.temp > 30 ? 'آب زیاد بنوشید' :
-                    'روز خوبی برای پیاده‌روی است'
-              }
-            </div>
+            <h2>{weather.name}</h2>
+            <p>{Math.round(weather.main.temp)}°C</p>
           </div>
         )}
 
-       {/* کیفیت هوا */}
-{airQuality && (
-  <div className="air-quality-section">
-    <h3 className="aqi-title">🌫️ کیفیت هوا (AQI)</h3>
-    
-    <div className="aqi-display">
-      <div 
-        className="aqi-circle"
-        style={{ 
-          background: `conic-gradient(${aqiLevel.color} 0% ${(aqiLevel.value || 1) * 20}%, #eee ${(aqiLevel.value || 1) * 20}% 100%)`,
-          borderColor: aqiLevel.color
-        }}
-      >
-        <span className="aqi-number">{airQuality.main.aqi}</span>
-        <span className="aqi-label">{aqiLevel.emoji} {aqiLevel.label}</span>
-      </div>
-      
-      <div className="aqi-details">
-        <p className="aqi-description">{aqiLevel.desc}</p>
-        
-        <div className="pollutants-grid">
-          <div className="pollutant">
-            <span className="pollutant-name">مونوکسید کربن</span>
-            <span className="pollutant-value">
-              {airQuality.components.co.toFixed(2)} μg/m³
-            </span>
-            <div className="pollutant-bar">
-              <div 
-                className="pollutant-fill" 
-                style={{ width: `${Math.min(airQuality.components.co / 10, 100)}%` }}
-              ></div>
-            </div>
+        {airQuality && aqiLevel && (
+          <div className="air-quality-section">
+            <h3>🌫 کیفیت هوا</h3>
+            <p>{aqiLevel.emoji} {aqiLevel.label}</p>
+            <p>{aqiLevel.desc}</p>
           </div>
-          
-          <div className="pollutant">
-            <span className="pollutant-name">دی‌اکسید نیتروژن</span>
-            <span className="pollutant-value">
-              {airQuality.components.no2.toFixed(2)} μg/m³
-            </span>
-            <div className="pollutant-bar">
-              <div 
-                className="pollutant-fill" 
-                style={{ width: `${Math.min(airQuality.components.no2 / 50, 100)}%` }}
-              ></div>
-            </div>
-          </div>
-          
-          <div className="pollutant">
-            <span className="pollutant-name">ازن</span>
-            <span className="pollutant-value">
-              {airQuality.components.o3.toFixed(2)} μg/m³
-            </span>
-            <div className="pollutant-bar">
-              <div 
-                className="pollutant-fill" 
-                style={{ width: `${Math.min(airQuality.components.o3 / 100, 100)}%` }}
-              ></div>
-            </div>
-          </div>
-          
-          <div className="pollutant">
-            <span className="pollutant-name">ذرات معلق</span>
-            <span className="pollutant-value">
-              {airQuality.components.pm2_5.toFixed(2)} μg/m³
-            </span>
-            <div className="pollutant-bar">
-              <div 
-                className="pollutant-fill" 
-                style={{ width: `${Math.min(airQuality.components.pm2_5 / 35, 100)}%` }}
-              ></div>
-            </div>
-          </div>
-        </div>
-        
-        <div className="aqi-tips">
-          <p>💡 توصیه: {
-            airQuality.main.aqi <= 2 ? 'می‌توانید به راحتی بیرون بروید' :
-            airQuality.main.aqi <= 3 ? 'گروه‌های حساس در خانه بمانند' :
-            airQuality.main.aqi <= 4 ? 'از فعالیت در فضای باز خودداری کنید' :
-            'در خانه بمانید و پنجره‌ها را ببندید'
-          }</p>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
+        )}
 
-        {/* پیش‌بینی ۵ روزه */}
         {forecast.length > 0 && (
           <div className="forecast-section">
-            <h3 className="forecast-title">پیش‌بینی ۵ روز آینده</h3>
-            <div className="forecast-container">
-
-              {forecast.map((day, index) => {
-                const date = new Date(day.dt * 1000);
-                const dayNames = ['یک‌شنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'];
-                const dayName = dayNames[date.getDay()];
-                const month = date.toLocaleDateString('fa-IR', { month: 'long' });
-
-                return (
-                  <div
-                    className="forecast-card"
-                    key={index}
-                    onClick={() => openDayDetails(day)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <p className="forecast-day">{dayName}</p>
-                    <p className="forecast-date">{date.getDate()} {month}</p>
-
-                    <img
-                      src={`http://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`}
-                      alt={day.weather[0].description}
-                      className="forecast-icon"
-                    />
-
-                    <p className="forecast-temp">{Math.round(day.main.temp)}°C</p>
-                    <p className="forecast-desc">{day.weather[0].description}</p>
-
-                    <div className="forecast-details">
-                      <span>💧 {day.main.humidity}%</span>
-                      <span>💨 {day.wind.speed} m/s</span>
-                    </div>
-                  </div>
-                );
-              })}
-
-            </div>
-          </div>
-        )}
-
-        {/* مودال جزئیات روز */}
-        {showDetails && selectedDay && (
-          <div className="modal-overlay">
-            <div className="modal-container">
-              <div className="modal-header">
-                <h2>📅 جزئیات کامل روز</h2>
-                <button
-                  className="close-btn"
-                  onClick={() => setShowDetails(false)}
-                >
-                  ✕
-                </button>
+            {forecast.map((d, i) => (
+              <div key={i} onClick={() => { setSelectedDay(d); setShowDetails(true); }}>
+                <p>{Math.round(d.main.temp)}°C</p>
               </div>
-
-              <div className="modal-content">
-                <div className="day-header">
-                  <h3>
-                    {new Date(selectedDay.dt * 1000).toLocaleDateString('fa-IR', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </h3>
-
-                  <div className="day-main-info">
-                    <img
-                      src={`http://openweathermap.org/img/wn/${selectedDay.weather[0].icon}@4x.png`}
-                      alt={selectedDay.weather[0].description}
-                    />
-
-                    <div className="temp-display">
-                      <span className="main-temp">{Math.round(selectedDay.main.temp)}°C</span>
-                      <span className="feels-like">احساس واقعی: {Math.round(selectedDay.main.feels_like)}°C</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="details-grid-modal">
-
-                  <div className="detail-box">
-                    <div className="detail-icon">🌡️</div>
-                    <div className="detail-text">
-                      <h4>دمای روز</h4>
-                      <p>حداکثر: {Math.round(selectedDay.main.temp_max)}°C</p>
-                      <p>حداقل: {Math.round(selectedDay.main.temp_min)}°C</p>
-                    </div>
-                  </div>
-
-                  <div className="detail-box">
-                    <div className="detail-icon">💧</div>
-                    <div className="detail-text">
-                      <h4>رطوبت</h4>
-                      <p>{selectedDay.main.humidity}%</p>
-                    </div>
-                  </div>
-
-                  <div className="detail-box">
-                    <div className="detail-icon">💨</div>
-                    <div className="detail-text">
-                      <h4>باد</h4>
-                      <p>{selectedDay.wind.speed} m/s</p>
-                    </div>
-                  </div>
-
-                  <div className="detail-box">
-                    <div className="detail-icon">👁️</div>
-                    <div className="detail-text">
-                      <h4>دید</h4>
-                      <p>{(selectedDay.visibility / 1000).toFixed(1)} km</p>
-                    </div>
-                  </div>
-
-                </div>
-
-                <div className="weather-poem">
-                  <p className="poem-title">✨ توصیه امروز:</p>
-                  <p className="poem-text">
-                    {selectedDay.weather[0].main === 'Clear'
-                      ? 'روزی آفتابی و زیبا در پیش است.'
-                      : selectedDay.weather[0].main === 'Rain'
-                        ? 'چتر را فراموش نکنید.'
-                        : 'روز خوبی داشته باشید.'}
-                  </p>
-                </div>
-
-              </div>
-            </div>
-          </div>
-        )}
-
-      </div>
-      {/* سایدبار کشویی */}
-<div className={`sidebar-overlay ${showSidebar ? 'active' : ''}`}>
-  <div className="sidebar-backdrop" onClick={() => setShowSidebar(false)}></div>
-  
-  <div className="sidebar-container">
-    <div className="sidebar-header">
-      <h3>🌍 جستجوی موقعیت مکانی</h3>
-      <button 
-        className="sidebar-close"
-        onClick={() => setShowSidebar(false)}
-      >
-        ✕
-      </button>
-    </div>
-    
-    <div className="sidebar-content">
-      <div className="location-search-box">
-        <input
-          type="text"
-          placeholder="نام شهر، کشور یا مختصات جغرافیایی..."
-          value={locationSearch}
-          onChange={(e) => {
-            setLocationSearch(e.target.value);
-            if (e.target.value.length > 2) {
-              searchLocation();
-            }
-          }}
-          onKeyPress={(e) => e.key === 'Enter' && searchLocation()}
-          className="location-input"
-        />
-        <button 
-          onClick={searchLocation}
-          className="location-search-btn"
-        >
-          🔍
-        </button>
-      </div>
-      
-      {/* نتایج جستجو */}
-      <div className="location-results">
-        {locationResults.length > 0 ? (
-          locationResults.map((loc, index) => (
-            <div 
-              key={index}
-              className="location-item"
-              onClick={() => selectLocation(loc)}
-            >
-              <div className="location-info">
-                <span className="location-name">{loc.name}</span>
-                <span className="location-details">
-                  {loc.state && `${loc.state}, `}{loc.country}
-                </span>
-              </div>
-              <div className="location-coords">
-                <span>🌐 {loc.lat.toFixed(2)}, {loc.lon.toFixed(2)}</span>
-              </div>
-            </div>
-          ))
-        ) : locationSearch.length > 2 ? (
-          <div className="no-results">
-            <p>📍 موقعیتی یافت نشد</p>
-            <p className="hint">نام شهر را به انگلیسی یا فارسی کامل بنویسید</p>
-          </div>
-        ) : (
-          <div className="search-hint">
-            <p>💡 برای شروع جستجو، حداقل ۳ حرف وارد کنید</p>
-            <div className="examples">
-              <p>مثال‌ها:</p>
-              <ul>
-                <li>Tehran, Iran</li>
-                <li>35.6892, 51.3890 (مختصات)</li>
-                <li>مشهد</li>
-                <li>New York, US</li>
-              </ul>
-            </div>
+            ))}
           </div>
         )}
       </div>
-      
-      {/* موقعیت فعلی کاربر */}
-      <div className="current-location-section">
-        <h4>📍 موقعیت فعلی شما</h4>
-        <button 
-          className="get-location-btn"
-          onClick={() => {
-            if (navigator.geolocation) {
-              navigator.geolocation.getCurrentPosition(
-                (position) => {
-                  const { latitude, longitude } = position.coords;
-                  setCity(`${latitude},${longitude}`);
-                  setShowSidebar(false);
-                  setTimeout(() => fetchWeather(), 300);
-                },
-                () => alert('دسترسی به موقعیت مکانی مجاز نیست')
-              );
-            } else {
-              alert('مرورگر شما از موقعیت‌یابی پشتیبانی نمی‌کند');
-            }
-          }}
-        >
-          دریافت موقعیت خودکار
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
+
+      {showSidebar && (
+        <div className="sidebar-overlay">
+          <input
+            value={locationSearch}
+            onChange={(e) => {
+              setLocationSearch(e.target.value);
+              if (e.target.value.length > 2) searchLocation();
+            }}
+          />
+          {locationResults.map((loc, i) => (
+            <div key={i} onClick={() => selectLocation(loc)}>
+              {loc.name} ({loc.country})
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
