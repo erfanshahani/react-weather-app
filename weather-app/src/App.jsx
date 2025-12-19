@@ -32,16 +32,14 @@ const searchLocation = async () => {
   }
 };
 
-// انتخاب موقعیت
+// انتخاب موقعیت - اصلاح شده
 const selectLocation = (location) => {
   setCity(location.name);
   setShowSidebar(false);
   setLocationSearch('');
   setLocationResults([]);
-  // بعد از بسته شدن سایدبار، آب‌وهوا را بگیر
-  setTimeout(() => {
-    fetchWeather();
-  }, 300);
+  // بلافاصله با نام شهر انتخابی سرچ می‌کند
+  fetchWeather(location.name);
 };
 
   const openDayDetails = (dayData) => {
@@ -67,14 +65,15 @@ const selectLocation = (location) => {
     };
   }, []);
 
-  const fetchWeather = async () => {
-    if (!city.trim()) return;
+  // تابع دریافت آب‌وهوا - اصلاح شده برای حل مشکل "شهر یافت نشد"
+  const fetchWeather = async (cityName = city) => {
+    if (!cityName || !cityName.trim()) return;
 
     setLoading(true);
     try {
       // weather
       const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric&lang=fa`
+        `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&appid=${API_KEY}&units=metric&lang=fa`
       );
       const data = await response.json();
 
@@ -83,7 +82,7 @@ const selectLocation = (location) => {
         setWeatherCondition(data.weather[0].main);
         // forecast
         const forecastResponse = await fetch(
-          `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric&lang=fa`
+          `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&appid=${API_KEY}&units=metric&lang=fa`
         );
         const forecastData = await forecastResponse.json();
 
@@ -94,7 +93,7 @@ const selectLocation = (location) => {
 
       } else {
         alert('شهر یافت نشد!');
-      }
+      };
 
     } catch (error) {
       alert('خطا در دریافت اطلاعات!');
@@ -148,7 +147,7 @@ const selectLocation = (location) => {
             />
 
             <button
-              onClick={fetchWeather}
+              onClick={() => fetchWeather()}
               className="search-btn"
               disabled={loading}
             >
@@ -169,7 +168,7 @@ const selectLocation = (location) => {
                       onClick={() => {
                         setCity(cityName);
                         setShowSuggestions(false);
-                        fetchWeather();
+                        fetchWeather(cityName); // اصلاح شده
                       }}
                     >
                       {cityName}
@@ -234,7 +233,7 @@ const selectLocation = (location) => {
           </div>
         )}
 
-       
+        
 
         {/* پیش‌بینی ۵ روزه */}
         {forecast.length > 0 && (
@@ -450,28 +449,41 @@ const selectLocation = (location) => {
         )}
       </div>
       
-      {/* موقعیت فعلی کاربر */}
+      {/* موقعیت فعلی کاربر - اصلاح شده برای حل مشکل دسترسی */}
       <div className="current-location-section">
         <h4>📍 موقعیت فعلی شما</h4>
         <button 
           className="get-location-btn"
           onClick={() => {
             if (navigator.geolocation) {
+              setLoading(true);
               navigator.geolocation.getCurrentPosition(
-                (position) => {
+                async (position) => {
                   const { latitude, longitude } = position.coords;
-                  setCity(`${latitude},${longitude}`);
-                  setShowSidebar(false);
-                  setTimeout(() => fetchWeather(), 300);
+                  try {
+                    // گرفتن نام شهر از روی مختصات
+                    const res = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`);
+                    const data = await res.json();
+                    if(data.length > 0) {
+                      setCity(data[0].name);
+                      setShowSidebar(false);
+                      fetchWeather(data[0].name);
+                    }
+                  } catch(e) { 
+                    fetchWeather(`${latitude},${longitude}`);
+                  }
                 },
-                () => alert('دسترسی به موقعیت مکانی مجاز نیست')
+                (error) => {
+                  setLoading(false);
+                  alert('دسترسی به موقعیت مکانی غیرمجاز است. لطفاً در تنظیمات مرورگر اجازه دهید.');
+                }
               );
             } else {
-              alert('مرورگر شما از موقعیت‌یابی پشتیبانی نمی‌کند');
+              alert('مرورگر شما پشتیبانی نمی‌کند');
             }
           }}
         >
-          دریافت موقعیت خودکار
+          {loading ? 'در حال دریافت...' : 'دریافت موقعیت خودکار'}
         </button>
       </div>
     </div>
