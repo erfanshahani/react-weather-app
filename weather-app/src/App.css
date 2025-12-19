@@ -1404,31 +1404,70 @@ footer p {
     grid-template-columns: 1fr;
   }
 }
-/* تنظیمات مخصوص موبایل */
+/* تنظیمات نهایی برای موبایل - جایگزین در انتهای App.css */
 @media (max-width: 600px) {
+  .container {
+    padding: 10px !important;
+    width: 100% !important;
+  }
+
   header {
-    padding: 20px 10px; /* ایجاد فاصله از بالا و پایین */
-    margin-bottom: 20px; /* فاصله دادن هدر از بخش جستجو */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    margin-top: 50px !important; /* ایجاد فضا برای دکمه + در بالا */
+    margin-bottom: 15px !important;
   }
 
   header h1 {
-    font-size: 1.8rem; /* یک مقدار کوچک‌تر کردن فونت برای جا شدن بهتر */
-    letter-spacing: 1px;
+    font-size: 1.6rem !important;
+    text-align: center;
   }
 
-  .container {
-    padding: 10px; /* فاصله گرفتن محتوا از لبه‌های گوشی */
+  /* جمع‌وجور کردن باکس جستجو */
+  .search-box {
+    display: flex !important;
+    flex-direction: column !important; /* زیر هم قرار گرفتن در موبایل */
+    gap: 8px !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    padding: 10px !important;
+    border-radius: 15px !important;
   }
 
-  /* اگر دکمه مثبت با هدر تداخل داره */
+  .search-input {
+    width: 100% !important;
+    height: 45px !important;
+    font-size: 14px !important;
+    text-align: center !important;
+  }
+
+  .search-btn {
+    width: 100% !important;
+    height: 45px !important;
+    font-size: 14px !important;
+    padding: 0 !important;
+  }
+
+  /* دکمه شناور مثبت */
   .floating-add-btn {
-    top: 15px; 
-    left: 15px;
-    width: 35px;
-    height: 35px;
-    font-size: 20px;
+    top: 15px !important;
+    left: 15px !important;
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 24px !important;
+    line-height: 40px !important;
+  }
+
+  /* اصلاح کارت آب‌وهوا که از صفحه بیرون نزند */
+  .weather-card {
+    margin: 10px 0 !important;
+    padding: 15px !important;
+    width: 100% !important;
+  }
+
+  .temperature {
+    font-size: 2.8rem !important;
+  }
+
+  /* پنهان کردن برخی جزئیات غیرضروری در موبایل برای خلوت شدن صفحه */
+  .feels-like {
+    font-size: 0.9rem !important;
   }
 }
