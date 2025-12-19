@@ -1404,3 +1404,31 @@ footer p {
     grid-template-columns: 1fr;
   }
 }
+/* تنظیمات مخصوص موبایل */
+@media (max-width: 600px) {
+  header {
+    padding: 20px 10px; /* ایجاد فاصله از بالا و پایین */
+    margin-bottom: 20px; /* فاصله دادن هدر از بخش جستجو */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  header h1 {
+    font-size: 1.8rem; /* یک مقدار کوچک‌تر کردن فونت برای جا شدن بهتر */
+    letter-spacing: 1px;
+  }
+
+  .container {
+    padding: 10px; /* فاصله گرفتن محتوا از لبه‌های گوشی */
+  }
+
+  /* اگر دکمه مثبت با هدر تداخل داره */
+  .floating-add-btn {
+    top: 15px; 
+    left: 15px;
+    width: 35px;
+    height: 35px;
+    font-size: 20px;
+  }
+}
