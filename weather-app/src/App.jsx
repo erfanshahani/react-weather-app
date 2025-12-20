@@ -4,7 +4,7 @@ import WeatherBackground from './WeatherBackground';
 import './App.css';
 
 function App() {
-  const [city, setCity] = useState('تهران');
+  const [city, setCity] = useState('');
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
   const [weatherCondition, setWeatherCondition] = useState('Default');
