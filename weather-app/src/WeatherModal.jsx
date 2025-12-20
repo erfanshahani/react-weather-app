@@ -1,4 +1,5 @@
 import React from 'react';
+import './WeatherModal.css';
 
 const WeatherModal = ({ showDetails, selectedDay, setShowDetails }) => {
   if (!showDetails || !selectedDay) return null;

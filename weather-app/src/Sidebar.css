@@ -1,0 +1,28 @@
+.floating-add-btn {
+    position: fixed;
+    top: 30px; right: 30px;
+    width: 60px; height: 60px;
+    background: linear-gradient(135deg, #FFD700, #FF8C00);
+    color: white;
+    border-radius: 50%;
+    font-size: 2.5rem;
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .sidebar-container {
+    position: fixed;
+    top: 0; right: 0; bottom: 0;
+    width: 90%; max-width: 500px;
+    background: rgba(255, 255, 255, 0.98);
+    transform: translateX(100%);
+    transition: transform 0.4s;
+    z-index: 3001;
+  }
+  
+  .sidebar-overlay.active .sidebar-container {
+    transform: translateX(0);
+  }

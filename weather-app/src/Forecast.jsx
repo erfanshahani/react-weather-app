@@ -1,4 +1,5 @@
 import React from 'react';
+import './Forecast.css';
 
 const Forecast = ({ forecast, openDayDetails }) => {
   if (forecast.length === 0) return null;

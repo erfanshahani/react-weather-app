@@ -1,0 +1,31 @@
+.forecast-section {
+    margin-top: 50px;
+    padding: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 25px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  .forecast-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+  }
+  
+  .forecast-card {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 20px;
+    padding: 20px;
+    width: 160px;
+    text-align: center;
+    color: white;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  
+  .forecast-card:hover {
+    transform: translateY(-10px);
+    background: rgba(255, 255, 255, 0.25);
+  }
