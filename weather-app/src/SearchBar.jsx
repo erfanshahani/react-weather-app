@@ -1,5 +1,5 @@
 import React from 'react';
-import './SearchBar.css';
+
 import { iranCities } from './cities'; // فقط یک نقطه
 
 const SearchBar = ({ city, setCity, showSuggestions, setShowSuggestions, suggestionsRef, handleKeyPress, fetchWeather, loading }) => {

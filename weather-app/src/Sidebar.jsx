@@ -1,5 +1,5 @@
 import React from 'react';
-import './Sidebar.css';
+
 const Sidebar = ({ 
   showSidebar, setShowSidebar, locationSearch, setLocationSearch, 
   searchLocation, locationResults, selectLocation, 

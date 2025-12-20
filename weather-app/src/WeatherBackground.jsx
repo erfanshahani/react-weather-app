@@ -1,5 +1,5 @@
 import React from 'react';
-import './WeatherBackground.css';
+
 
 const WeatherBackground = ({ weatherCondition }) => {
   const getAnimationClass = () => {
