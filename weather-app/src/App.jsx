@@ -1,19 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { iranCities } from './cities';
+import { iranCities } from './cities'; // فایل شهرها کنار App.jsx است
 import WeatherBackground from './WeatherBackground';
 
-// وارد کردن کامپوننت‌های جدید
-import Header from './components/Header';
-import SearchBar from './components/SearchBar';
-import WeatherCard from './components/WeatherCard';
-import Forecast from './components/Forecast';
-import WeatherModal from './components/WeatherModal';
-import Sidebar from './components/Sidebar';
+// آدرس‌ها باید به پوشه components اشاره کنند
+// آدرس درست وقتی فایل‌ها کنار App.jsx هستند:
+import Header from "./Header.jsx";
+import SearchBar from "./SearchBar.jsx";
+import WeatherCard from "./WeatherCard.jsx";
+import Forecast from "./Forecast.jsx";
+import WeatherModal from "./WeatherModal.jsx";
+import Sidebar from "./Sidebar.jsx";
 
 import './App.css';
 
+// بقیه کد App همان است که قبلاً داشتیم...
+// بقیه کد App همان است که قبلاً داشتیم...
+
 function App() {
-  // --- States ---
   const [city, setCity] = useState('تهران');
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -29,7 +32,6 @@ function App() {
   const suggestionsRef = useRef(null);
   const API_KEY = '3588bc818593915563499238cac95b0a';
 
-  // --- Effects ---
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (suggestionsRef.current && !suggestionsRef.current.contains(event.target)) {
@@ -40,7 +42,6 @@ function App() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // --- Functions ---
   const fetchWeather = async (cityName = city) => {
     if (!cityName || !cityName.trim()) return;
     setLoading(true);
@@ -99,7 +100,6 @@ function App() {
     if (e.key === 'Enter') fetchWeather();
   };
 
-  // --- Render ---
   return (
     <div className="app">
       <WeatherBackground weatherCondition={weatherCondition} />
@@ -110,7 +110,6 @@ function App() {
         <button 
           className="floating-add-btn"
           onClick={() => setShowSidebar(true)}
-          title="جستجوی موقعیت جدید"
         >
           +
         </button>
@@ -127,12 +126,14 @@ function App() {
           iranCities={iranCities}
         />
 
-        <WeatherCard weather={weather} />
+        {weather && <WeatherCard weather={weather} />}
 
-        <Forecast 
-          forecast={forecast} 
-          openDayDetails={openDayDetails} 
-        />
+        {forecast.length > 0 && (
+          <Forecast 
+            forecast={forecast} 
+            openDayDetails={openDayDetails} 
+          />
+        )}
 
         <WeatherModal 
           showDetails={showDetails}
