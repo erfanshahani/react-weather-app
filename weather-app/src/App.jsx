@@ -111,7 +111,7 @@ const selectLocation = (location) => {
 
   return (
     <div className="app">
-      <WeatherBackground weatherCondition={weatherCondition} />
+    <WeatherBackground weather={weather} />
 
       <div className="container">
 
@@ -236,44 +236,48 @@ const selectLocation = (location) => {
         
 
         {/* پیش‌بینی ۵ روزه */}
-        {forecast.length > 0 && (
-          <div className="forecast-section">
-            <h3 className="forecast-title">پیش‌بینی ۵ روز آینده</h3>
-            <div className="forecast-container">
+{forecast.length > 0 && (
+  <div className="forecast-section">
+    <h3 className="forecast-title">پیش‌بینی ۵ روز آینده</h3>
+    <div className="forecast-container">
 
-              {forecast.map((day, index) => {
-                const date = new Date(day.dt * 1000);
-                const dayNames = ['یک‌شنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'];
-                const dayName = dayNames[date.getDay()];
-                const month = date.toLocaleDateString('fa-IR', { month: 'long' });
+      {forecast.map((day, index) => {
+        // تاریخ واقعی از API (dt * 1000 = میلی‌ثانیه)
+        const date = new Date(day.dt * 1000);
 
-                return (
-                  <div
-                    className="forecast-card"
-                    key={index}
-                    onClick={() => openDayDetails(day)}
-                    style={{ cursor: 'pointer' }}
-                  >
-                    <p className="forecast-day">{dayName}</p>
-                    <p className="forecast-date">{date.getDate()} {month}</p>
+        // اسم روز هفته به فارسی
+        const dayNames = ['یک‌شنبه', 'دوشنبه', 'سه‌شنبه', 'چهارشنبه', 'پنج‌شنبه', 'جمعه', 'شنبه'];
+        const dayName = dayNames[date.getDay()];
 
-                    <img
-                      src={`http://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`}
-                      alt={day.weather[0].description}
-                      className="forecast-icon"
-                    />
+        // تاریخ به فرمت فارسی (مثلاً ۳۰ آذر)
+        const options = { day: 'numeric', month: 'long' };
+        const persianDate = date.toLocaleDateString('fa-IR', options);
 
-                    <p className="forecast-temp">{Math.round(day.main.temp)}°C</p>
-                    <p className="forecast-desc">{day.weather[0].description}</p>
+        return (
+          <div
+            className="forecast-card"
+            key={index}
+            onClick={() => openDayDetails(day)}
+            style={{ cursor: 'pointer' }}
+          >
+            <p className="forecast-day">{dayName}</p>
+            <p className="forecast-date">{persianDate}</p>
 
-                    
-                  </div>
-                );
-              })}
+            <img
+              src={`http://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`}
+              alt={day.weather[0].description}
+              className="forecast-icon"
+            />
 
-            </div>
+            <p className="forecast-temp">{Math.round(day.main.temp)}°C</p>
+            <p className="forecast-desc">{day.weather[0].description}</p>
           </div>
-        )}
+        );
+      })}
+
+    </div>
+  </div>
+)}
 
         {/* مودال جزئیات روز */}
         {showDetails && selectedDay && (
@@ -291,14 +295,14 @@ const selectLocation = (location) => {
 
               <div className="modal-content">
                 <div className="day-header">
-                  <h3>
-                    {new Date(selectedDay.dt * 1000).toLocaleDateString('fa-IR', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric'
-                    })}
-                  </h3>
+                <h3>
+  {new Date(selectedDay.dt * 1000).toLocaleDateString('fa-IR', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  })}
+</h3>
 
                   <div className="day-main-info">
                     <img
