@@ -1471,3 +1471,170 @@ footer p {
     font-size: 0.9rem !important;
   }
 }
+/* App.css - نسخه نهایی 3D پیشرفته و بهینه */
+
+/* صحنه اصلی با perspective برای افکت 3D */
+.wb.scene {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+  perspective: 1000px;
+  transition: background 2s ease;
+}
+
+/* آسمان پایه */
+.sky {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+/* گرادیان‌های اصلی - بهینه‌تر و سینمایی‌تر */
+.wb.clear.day { background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 50%, #56CCF2 100%); }
+.wb.clear.night { background: linear-gradient(180deg, #0B1026 0%, #1A1F3D 50%, #2C0B4B 100%); }
+.wb.clouds { background: linear-gradient(180deg, #A8B5C9 0%, #6B7A8F 60%, #3C4858 100%); }
+.wb.rain, .wb.drizzle { background: linear-gradient(180deg, #2C3E50 0%, #34495E 60%, #1B2631 100%); }
+.wb.snow { background: linear-gradient(180deg, #D6EAF8 0%, #AED6F1 60%, #85C1E9 100%); }
+.wb.fog { background: linear-gradient(180deg, #BDC3C7 0%, #95A5A6 60%, #7F8C8D 100%); }
+.wb.thunderstorm { background: linear-gradient(180deg, #141E30 0%, #243B55 70%, #0C0C0C 100%); }
+.wb.default { background: linear-gradient(180deg, #74B9FF 0%, #0984E3 100%); }
+
+/* خورشید و ماه با افکت 3D و درخشش قوی‌تر */
+.celestial {
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  transform: translateZ(100px);
+  filter: blur(10px);
+  opacity: 0.9;
+  transition: all 2s ease;
+}
+
+.sun {
+  background: radial-gradient(circle at 30% 30%, #FFF 0%, #FFEB3B 30%, #F57F17 100%);
+  box-shadow: 
+    0 0 100px #FFEB3B,
+    0 0 200px #FFA726,
+    inset 0 0 60px #FFFFFF;
+  animation: pulse 20s infinite alternate;
+}
+
+.moon {
+  background: radial-gradient(circle at 40% 40%, #F8F9FA 0%, #E9ECEF 40%, #DEE2E6 100%);
+  box-shadow: 
+    0 0 80px #DEE2E6,
+    inset -20px -20px 40px rgba(0,0,0,0.3);
+  animation: moon-glow 15s infinite alternate;
+}
+
+/* ابرهای سه‌بعدی شناور */
+.clouds-3d {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 100px;
+  filter: blur(8px);
+  opacity: 0.7;
+}
+
+.cloud-1 { width: 300px; height: 100px; top: 15%; left: -300px; animation: float 60s linear infinite; transform: translateZ(50px); }
+.cloud-2 { width: 400px; height: 120px; top: 25%; left: -400px; animation: float 80s linear infinite; transform: translateZ(20px); }
+.cloud-3 { width: 250px; height: 80px; top: 10%; left: -250px; animation: float 50s linear infinite reverse; transform: translateZ(80px); }
+.cloud-4 { width: 350px; height: 110px; top: 35%; left: -350px; animation: float 70s linear infinite reverse; transform: translateZ(0px); }
+
+@keyframes float {
+  from { transform: translateX(-100%) translateZ(var(--z, 0px)); }
+  to { transform: translateX(150%) translateZ(var(--z, 0px)); }
+}
+
+@keyframes pulse { 0% { box-shadow: 0 0 100px #FFEB3B; } 100% { box-shadow: 0 0 150px #FFA726; } }
+@keyframes moon-glow { 0% { box-shadow: 0 0 80px #DEE2E6; } 100% { box-shadow: 0 0 120px #BDC3C7; } }
+
+/* باران سه‌بعدی */
+.rain-3d {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.drop {
+  position: absolute;
+  width: 2px;
+  height: 50px;
+  background: linear-gradient(transparent, rgba(255,255,255,0.8));
+  left: calc(5% * var(--i));
+  animation: fall 0.8s linear infinite;
+  animation-delay: calc(0.1s * var(--i));
+  transform: translateZ(-50px) rotateX(70deg);
+}
+
+@keyframes fall {
+  to { transform: translateY(100vh) translateZ(-200px); }
+}
+
+/* برف سه‌بعدی */
+.snow-3d {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+.flake {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.9;
+  left: calc(1% * var(--i));
+  animation: snowfall 8s linear infinite;
+  animation-delay: calc(0.1s * var(--i));
+  transform: translateZ(-100px);
+}
+
+@keyframes snowfall {
+  0% { transform: translateY(-100px) translateZ(-100px) rotate(0deg); }
+  100% { transform: translateY(100vh) translateZ(-300px) rotate(720deg); }
+}
+
+/* مه سه‌بعدی */
+.fog .sky::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(200,210,220,0.6) 80%);
+  animation: mist 25s ease-in-out infinite;
+  transform: translateZ(-50px);
+}
+
+@keyframes mist {
+  0%, 100% { opacity: 0.4; transform: translateZ(-50px) scale(1.1); }
+  50% { opacity: 0.7; transform: translateZ(-100px) scale(1.2); }
+}
+
+/* رعد و برق پیشرفته */
+.thunderstorm::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: white;
+  opacity: 0;
+  animation: lightning-flash 10s infinite;
+  pointer-events: none;
+}
+
+@keyframes lightning-flash {
+  0%, 92%, 100% { opacity: 0; }
+  93% { opacity: 0.9; }
+  94% { opacity: 0.3; }
+  95% { opacity: 0.8; }
+}
