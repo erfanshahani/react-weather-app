@@ -4,7 +4,7 @@ import WeatherBackground from './WeatherBackground';
 import './App.css';
 
 function App() {
-  const [city, setCity] = useState('تهران');
+  const [city, setCity] = useState('');
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
   const [weatherCondition, setWeatherCondition] = useState('Default');
@@ -266,10 +266,7 @@ const selectLocation = (location) => {
                     <p className="forecast-temp">{Math.round(day.main.temp)}°C</p>
                     <p className="forecast-desc">{day.weather[0].description}</p>
 
-                    <div className="forecast-details">
-                      <span>💧 {day.main.humidity}%</span>
-                      <span>💨 {day.wind.speed} m/s</span>
-                    </div>
+                    
                   </div>
                 );
               })}
