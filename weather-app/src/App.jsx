@@ -223,13 +223,7 @@ const selectLocation = (location) => {
               </div>
             </div>
 
-            <div className="tips">
-              💡 نکته روز: {
-                weather.weather[0].main === 'Rain' ? 'چتر همراه داشته باشید' :
-                  weather.main.temp > 30 ? 'آب زیاد بنوشید' :
-                    'روز خوبی برای پیاده‌روی است'
-              }
-            </div>
+            
           </div>
         )}
 
