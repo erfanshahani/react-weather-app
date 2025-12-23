@@ -1639,3 +1639,49 @@ footer p {
   94% { opacity: 0.3; }
   95% { opacity: 0.8; }
 }
+/* فوتر هوشمند در پایین صفحه */
+.app-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(15px);
+  padding: 15px 20px;
+  text-align: center;
+  z-index: 5;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.footer-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.footer-title {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin-bottom: 5px;
+}
+
+.footer-tip {
+  font-size: 1.1rem;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* ریسپانسیو برای موبایل */
+@media (max-width: 768px) {
+  .app-footer {
+    padding: 12px 15px;
+  }
+  
+  .footer-title {
+    font-size: 0.9rem;
+  }
+  
+  .footer-tip {
+    font-size: 1rem;
+  }
+}
