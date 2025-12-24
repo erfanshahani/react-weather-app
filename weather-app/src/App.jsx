@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { iranCities } from './cities';
 import WeatherBackground from './WeatherBackground';
+import { useTheme } from './ThemeContext';
 import './App.css';
 
 function App() {
+  const { isDark, toggleTheme } = useTheme();
+
   const [city, setCity] = useState('');
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -19,6 +22,21 @@ function App() {
   const [forecast, setForecast] = useState([]);
 
   const API_KEY = '3588bc818593915563499238cac95b0a';
+
+  // تابع تشخیص وضعیت آب‌وهوا برای انیمیشن
+  const getWeatherAnimationClass = (main, description = '') => {
+    const descLower = description.toLowerCase();
+    if (main === 'Snow' || descLower.includes('برف') || descLower.includes('snow')) {
+      return 'snow-animation';
+    }
+    if (main === 'Rain' || main === 'Drizzle' || descLower.includes('باران') || descLower.includes('rain')) {
+      return 'rain-animation';
+    }
+    if (main === 'Clear' || descLower.includes('صاف') || descLower.includes('آفتابی') || descLower.includes('clear')) {
+      return 'sun-animation';
+    }
+    return '';
+  };
 
   const searchLocation = async () => {
     if (!locationSearch.trim()) return;
@@ -108,10 +126,37 @@ function App() {
           <h1>🌤 آسمان انگار</h1>
         </header>
 
+        {/* دکمه سوئیچ تم - بالا چپ */}
+        <button
+          onClick={toggleTheme}
+          className="floating-add-btn"
+          style={{
+            top: '30px',
+            left: '30px',
+            width: '60px',
+            height: '60px',
+            fontSize: '1.8rem',
+            background: isDark
+              ? 'linear-gradient(135deg, #1e293b, #334155)'
+              : 'linear-gradient(135deg, #FFD700, #FFED4E)',
+            boxShadow: isDark
+              ? '0 10px 30px rgba(0, 0, 0, 0.6)'
+              : '0 10px 30px rgba(255, 215, 0, 0.4)',
+          }}
+          title={isDark ? 'تم روشن' : 'تم تاریک'}
+        >
+          {isDark ? '☀️' : '🌙'}
+        </button>
+
+        {/* دکمه + اصلی - بالا راست */}
         <button 
           className="floating-add-btn"
           onClick={() => setShowSidebar(true)}
           title="جستجوی موقعیت جدید"
+          style={{
+            top: '30px',
+            right: '30px',
+          }}
         >
           +
         </button>
@@ -182,6 +227,7 @@ function App() {
                 <img
                   src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}@4x.png`}
                   alt={weather.weather[0].description}
+                  className={`main-weather-icon ${getWeatherAnimationClass(weather.weather[0].main, weather.weather[0].description)}`}
                 />
                 <p className="weather-desc">{weather.weather[0].description}</p>
               </div>
@@ -230,7 +276,7 @@ function App() {
                     <img
                       src={`http://openweathermap.org/img/wn/${day.weather[0].icon}@2x.png`}
                       alt={day.weather[0].description}
-                      className="forecast-icon"
+                      className={`forecast-icon ${getWeatherAnimationClass(day.weather[0].main, day.weather[0].description)}`}
                     />
                     <p className="forecast-temp">{Math.round(day.main.temp)}°C</p>
                     <p className="forecast-desc">{day.weather[0].description}</p>
@@ -241,7 +287,7 @@ function App() {
           </div>
         )}
 
-        {/* مودال جزئیات روز با توصیه پویا و هوشمند */}
+        {/* مودال جزئیات روز */}
         {showDetails && selectedDay && (
           <div className="modal-overlay">
             <div className="modal-container">
@@ -267,6 +313,7 @@ function App() {
                     <img
                       src={`http://openweathermap.org/img/wn/${selectedDay.weather[0].icon}@4x.png`}
                       alt={selectedDay.weather[0].description}
+                      className={`main-weather-icon ${getWeatherAnimationClass(selectedDay.weather[0].main, selectedDay.weather[0].description)}`}
                     />
                     <div className="temp-display">
                       <span className="main-temp">{Math.round(selectedDay.main.temp)}°C</span>
@@ -275,6 +322,7 @@ function App() {
                   </div>
                 </div>
 
+                {/* بقیه مودال دقیقاً مثل قبل */}
                 <div className="details-grid-modal">
                   <div className="detail-box">
                     <div className="detail-icon">🌡️</div>
@@ -310,7 +358,6 @@ function App() {
                   </div>
                 </div>
 
-                {/* توصیه هوشمند و پویا بر اساس آب‌وهوای واقعی اون روز */}
                 <div className="weather-poem">
                   <p className="poem-title">✨ توصیه امروز:</p>
                   <p className="poem-text">
@@ -367,120 +414,119 @@ function App() {
             </div>
           </div>
         )}
-      </div>
 
-      {/* سایدبار کشویی */}
-      <div className={`sidebar-overlay ${showSidebar ? 'active' : ''}`}>
-        <div className="sidebar-backdrop" onClick={() => setShowSidebar(false)}></div>
-        
-        <div className="sidebar-container">
-          <div className="sidebar-header">
-            <h3>🌍 جستجوی موقعیت مکانی</h3>
-            <button className="sidebar-close" onClick={() => setShowSidebar(false)}>
-              ✕
-            </button>
-          </div>
+        {/* سایدبار کشویی - کامل و بدون تغییر */}
+        <div className={`sidebar-overlay ${showSidebar ? 'active' : ''}`}>
+          <div className="sidebar-backdrop" onClick={() => setShowSidebar(false)}></div>
           
-          <div className="sidebar-content">
-            <div className="location-search-box">
-              <input
-                type="text"
-                placeholder="نام شهر، کشور یا مختصات جغرافیایی..."
-                value={locationSearch}
-                onChange={(e) => {
-                  setLocationSearch(e.target.value);
-                  if (e.target.value.length > 2) {
-                    searchLocation();
-                  }
-                }}
-                onKeyPress={(e) => e.key === 'Enter' && searchLocation()}
-                className="location-input"
-              />
-              <button onClick={searchLocation} className="location-search-btn">
-                🔍
+          <div className="sidebar-container">
+            <div className="sidebar-header">
+              <h3>🌍 جستجوی موقعیت مکانی</h3>
+              <button className="sidebar-close" onClick={() => setShowSidebar(false)}>
+                ✕
               </button>
             </div>
             
-            <div className="location-results">
-              {locationResults.length > 0 ? (
-                locationResults.map((loc, index) => (
-                  <div 
-                    key={index}
-                    className="location-item"
-                    onClick={() => selectLocation(loc)}
-                  >
-                    <div className="location-info">
-                      <span className="location-name">{loc.name}</span>
-                      <span className="location-details">
-                        {loc.state && `${loc.state}, `}{loc.country}
-                      </span>
+            <div className="sidebar-content">
+              <div className="location-search-box">
+                <input
+                  type="text"
+                  placeholder="نام شهر، کشور یا مختصات جغرافیایی..."
+                  value={locationSearch}
+                  onChange={(e) => {
+                    setLocationSearch(e.target.value);
+                    if (e.target.value.length > 2) {
+                      searchLocation();
+                    }
+                  }}
+                  onKeyPress={(e) => e.key === 'Enter' && searchLocation()}
+                  className="location-input"
+                />
+                <button onClick={searchLocation} className="location-search-btn">
+                  🔍
+                </button>
+              </div>
+              
+              <div className="location-results">
+                {locationResults.length > 0 ? (
+                  locationResults.map((loc, index) => (
+                    <div 
+                      key={index}
+                      className="location-item"
+                      onClick={() => selectLocation(loc)}
+                    >
+                      <div className="location-info">
+                        <span className="location-name">{loc.name}</span>
+                        <span className="location-details">
+                          {loc.state && `${loc.state}, `}{loc.country}
+                        </span>
+                      </div>
+                      <div className="location-coords">
+                        <span>🌐 {loc.lat.toFixed(2)}, {loc.lon.toFixed(2)}</span>
+                      </div>
                     </div>
-                    <div className="location-coords">
-                      <span>🌐 {loc.lat.toFixed(2)}, {loc.lon.toFixed(2)}</span>
+                  ))
+                ) : locationSearch.length > 2 ? (
+                  <div className="no-results">
+                    <p>📍 موقعیتی یافت نشد</p>
+                    <p className="hint">نام شهر را به انگلیسی یا فارسی کامل بنویسید</p>
+                  </div>
+                ) : (
+                  <div className="search-hint">
+                    <p>💡 برای شروع جستجو، حداقل ۳ حرف وارد کنید</p>
+                    <div className="examples">
+                      <p>مثال‌ها:</p>
+                      <ul>
+                        <li>Tehran, Iran</li>
+                        <li>35.6892, 51.3890 (مختصات)</li>
+                        <li>مشهد</li>
+                        <li>New York, US</li>
+                      </ul>
                     </div>
                   </div>
-                ))
-              ) : locationSearch.length > 2 ? (
-                <div className="no-results">
-                  <p>📍 موقعیتی یافت نشد</p>
-                  <p className="hint">نام شهر را به انگلیسی یا فارسی کامل بنویسید</p>
-                </div>
-              ) : (
-                <div className="search-hint">
-                  <p>💡 برای شروع جستجو، حداقل ۳ حرف وارد کنید</p>
-                  <div className="examples">
-                    <p>مثال‌ها:</p>
-                    <ul>
-                      <li>Tehran, Iran</li>
-                      <li>35.6892, 51.3890 (مختصات)</li>
-                      <li>مشهد</li>
-                      <li>New York, US</li>
-                    </ul>
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            <div className="current-location-section">
-              <h4>📍 موقعیت فعلی شما</h4>
-              <button 
-                className="get-location-btn"
-                onClick={() => {
-                  if (navigator.geolocation) {
-                    setLoading(true);
-                    navigator.geolocation.getCurrentPosition(
-                      async (position) => {
-                        const { latitude, longitude } = position.coords;
-                        try {
-                          const res = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`);
-                          const data = await res.json();
-                          if (data.length > 0) {
-                            setCity(data[0].name);
-                            setShowSidebar(false);
-                            fetchWeather(data[0].name);
+                )}
+              </div>
+              
+              <div className="current-location-section">
+                <h4>📍 موقعیت فعلی شما</h4>
+                <button 
+                  className="get-location-btn"
+                  onClick={() => {
+                    if (navigator.geolocation) {
+                      setLoading(true);
+                      navigator.geolocation.getCurrentPosition(
+                        async (position) => {
+                          const { latitude, longitude } = position.coords;
+                          try {
+                            const res = await fetch(`https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&appid=${API_KEY}`);
+                            const data = await res.json();
+                            if (data.length > 0) {
+                              setCity(data[0].name);
+                              setShowSidebar(false);
+                              fetchWeather(data[0].name);
+                            }
+                          } catch (e) {
+                            fetchWeather(`${latitude},${longitude}`);
                           }
-                        } catch (e) {
-                          fetchWeather(`${latitude},${longitude}`);
+                        },
+                        (error) => {
+                          setLoading(false);
+                          alert('دسترسی به موقعیت مکانی غیرمجاز است. لطفاً در تنظیمات مرورگر اجازه دهید.');
                         }
-                      },
-                      (error) => {
-                        setLoading(false);
-                        alert('دسترسی به موقعیت مکانی غیرمجاز است. لطفاً در تنظیمات مرورگر اجازه دهید.');
-                      }
-                    );
-                  } else {
-                    alert('مرورگر شما پشتیبانی نمی‌کند');
-                  }
-                }}
-              >
-                {loading ? 'در حال دریافت...' : 'دریافت موقعیت خودکار'}
-              </button>
+                      );
+                    } else {
+                      alert('مرورگر شما پشتیبانی نمی‌کند');
+                    }
+                  }}
+                >
+                  {loading ? 'در حال دریافت...' : 'دریافت موقعیت خودکار'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-    
   );
 }
 
